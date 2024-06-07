@@ -1,9 +1,11 @@
 import {
+  Alert,
   Avatar,
   Box,
   Button,
   Grid,
   InputAdornment,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -14,8 +16,44 @@ import LockIcon from "@mui/icons-material/Lock";
 import GoogleIcon from "@mui/icons-material/Google";
 import XIcon from "@mui/icons-material/X";
 import FacebookIcon from "@mui/icons-material/Facebook";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { postUser } from "../../../../api/user.api";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {  RegisterSchemaSignUP } from "../validation/Registerschema";
 
-function SignUp({ handleParam }: { handleParam: ({mode}: {mode:string}) => void }) {
+function SignUp({
+  handleParam,
+}: {
+  handleParam: ({ mode }: { mode: string }) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(RegisterSchemaSignUP),
+  });
+
+  const onSumbitSignUp = (data) => {
+    postUser(data);
+    setOpen(true);
+  };
+  console.log(errors);
+
   return (
     <Box
       sx={{
@@ -27,17 +65,21 @@ function SignUp({ handleParam }: { handleParam: ({mode}: {mode:string}) => void 
       }}
     >
       <Typography component="h1" variant="h3">
-        صفحه ثبت نام
+        Sign UP Page
       </Typography>
-      <Box component="form" noValidate sx={{ mt: 1 }}>
+      <Box
+        component="form"
+        sx={{ mt: 1 }}
+        onSubmit={handleSubmit(onSumbitSignUp)}
+      >
         <TextField
+          {...register("email")}
           margin="normal"
           fullWidth
-          id="email"
-          placeholder="ایمیل"
-          name="email"
-          autoComplete="email"
+          placeholder="email"
           autoFocus
+          helperText={errors.email?.message}
+          error={!!errors.email}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -47,12 +89,12 @@ function SignUp({ handleParam }: { handleParam: ({mode}: {mode:string}) => void 
           }}
         />
         <TextField
+          {...register("username")}
           margin="normal"
           fullWidth
-          id="username"
-          placeholder="نام کاربری"
-          name="username"
-          autoComplete="email"
+          helperText={errors.username?.message}
+          error={!!errors.username}
+          placeholder="username"
           autoFocus
           InputProps={{
             startAdornment: (
@@ -63,12 +105,13 @@ function SignUp({ handleParam }: { handleParam: ({mode}: {mode:string}) => void 
           }}
         />
         <TextField
+          {...register("password")}
           margin="normal"
           fullWidth
-          name="password"
+          helperText={errors.password?.message}
+          error={!!errors.password}
           type="password"
-          id="password"
-          placeholder="رمز عبور"
+          placeholder="password"
           autoComplete="current-password"
           InputProps={{
             startAdornment: (
@@ -84,17 +127,27 @@ function SignUp({ handleParam }: { handleParam: ({mode}: {mode:string}) => void 
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          ثبت نام
+          Sign Up
         </Button>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            Sign Up is successfully
+          </Alert>
+        </Snackbar>
         <Grid container>
           <Grid item>
             <Button onClick={() => handleParam({ mode: "SignIn" })}>
-              ورود
+              Sign IN
             </Button>
           </Grid>
         </Grid>
         <Typography sx={{ textAlign: "center", mt: 3, mb: 2 }}>
-          ثبت نام از طریق روش های دیگر
+          Sign Up with another way
         </Typography>
         <Stack
           direction="row"

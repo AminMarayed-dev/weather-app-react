@@ -1,4 +1,3 @@
-
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { useSearchParams } from "react-router-dom";
@@ -12,11 +11,27 @@ function Register() {
     <Grid container component="main" sx={{ height: "100vh" }}>
       <Grid
         item
+        xs={12}
+        sm={8}
+        md={5}
+        component={Paper}
+        elevation={6}
+        square
+        sx={{   color:`primary.darker`}}
+      >
+        {mode === "SignUp" ? (
+          <SignUp handleParam={setSerachParams} />
+        ) : (
+          <SignIn handleParam={setSerachParams} />
+        )}
+      </Grid>
+      <Grid
+        item
         xs={false}
         sm={4}
         md={7}
         sx={{
-          backgroundImage: "url(../src/assets/weather.jpg)",
+          backgroundImage: "url(../src/assets/weather-logo.jpg)",
           backgroundRepeat: "no-repeat",
           backgroundColor: (t) =>
             t.palette.mode === "light"
@@ -26,13 +41,6 @@ function Register() {
           backgroundPosition: "center",
         }}
       />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        {mode === "SignUp" ? (
-          <SignUp handleParam={setSerachParams} />
-        ) : (
-          <SignIn handleParam={setSerachParams} />
-        )}
-      </Grid>
     </Grid>
   );
 }
